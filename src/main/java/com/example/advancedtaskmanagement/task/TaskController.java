@@ -39,14 +39,14 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    //  Belirli bir projeye ait task'ları getir
+
     @GetMapping("/project/{projectId}")
     public ResponseEntity<List<TaskResponseDto>> getTasksByProjectId(@PathVariable Long projectId) {
        List<TaskResponseDto> tasks = taskService.getByProjectId(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
-    //  Belirli bir kullanıcıya atanmış task'ları getir
+
     @GetMapping("/assignee/{userId}")
     public ResponseEntity<List<TaskResponseDto>> getTasksByAssignee(@PathVariable Long userId) {
 
@@ -54,10 +54,8 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(taskList);
     }
 
-
     @PatchMapping("/{taskId}/status")
     public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatus status , @RequestBody String reason) {
-
         TaskResponseDto taskResponse = taskService.updateTaskStatus(taskId, status, reason);
         return ResponseEntity.status(HttpStatus.OK).body(taskResponse);
     }

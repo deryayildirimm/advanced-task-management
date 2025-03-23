@@ -14,7 +14,7 @@ public class ProjectRequestDto {
     private Date startDate;
     private Date endDate;
     private ProjectStatus status;
-    private Long departmentId;  // Projenin bağlı olduğu departman
+    private Long departmentId;
 
 
 }

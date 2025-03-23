@@ -30,26 +30,25 @@ public class DepartmentService {
 
     }
 
-    // TODO: sadece isim güncelleme herkesin ulaşabildiği bir metod
+
     public DepartmentResponseDto updateDepartment(Long departmentId, DepartmentRequestDto departmentRequestDTO) {
-        // Var olan departmanı bul
+
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Department not found"));
 
-        // Request DTO'dan gelen verilerle mevcut departmanı güncelle
         department.setName(departmentRequestDTO.getName());
 
-        // Güncellenmiş departmanı kaydet
+
         Department updatedDepartment = departmentRepository.save(department);
-        // Güncellenmiş departmanı Response DTO'ya çevir
+
         return departmentMapper.departmentToDepartmentResponseDTO(updatedDepartment);
     }
 
     public DepartmentResponseDto getDepartmentById(Long departmentId) {
-        // Departmanı bul
+
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Department not found"));
-        // Departmanı Response DTO'ya çevir
+
         return departmentMapper.departmentToDepartmentResponseDTO(department);
     }
 

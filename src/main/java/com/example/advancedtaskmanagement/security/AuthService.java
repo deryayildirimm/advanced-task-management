@@ -53,7 +53,4 @@ public class AuthService {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public Long getCurrentUserId() {
-        return getCurrentUser().getId();
-    }
 }

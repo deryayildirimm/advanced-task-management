@@ -13,19 +13,6 @@ import java.util.List;
 @RequestMapping("v1/projects")
 public class ProjectController {
 
-    /*
-    create project
-    update project
-    update project status
-    get project
-    get all project
-    get project tasks
-    get projects by department
-    delete project
-    filter the projects
-
-     */
-
     private final ProjectService projectService;
 
     public ProjectController(ProjectService projectService) {
@@ -95,7 +82,7 @@ public class ProjectController {
     }
 
 
-    // 11. Update Task Status within a Project
+
     @PutMapping("/{projectId}/tasks/{taskId}/status")
     public ResponseEntity<TaskResponseDto> updateTaskStatus(@PathVariable Long projectId,
                                                             @PathVariable Long taskId,

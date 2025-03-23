@@ -4,7 +4,6 @@ import com.example.advancedtaskmanagement.task.Task;
 import com.example.advancedtaskmanagement.task.TaskRepository;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

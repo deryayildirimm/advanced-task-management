@@ -2,12 +2,7 @@ package com.example.advancedtaskmanagement.task.task_progress;
 
 import com.example.advancedtaskmanagement.task.Task;
 import com.example.advancedtaskmanagement.task.TaskRepository;
-import com.example.advancedtaskmanagement.task.TaskResponseDto;
 import com.example.advancedtaskmanagement.task.TaskStatus;
-import com.example.advancedtaskmanagement.task.task_comment.TaskComment;
-import com.example.advancedtaskmanagement.task.task_comment.TaskCommentRequestDto;
-import com.example.advancedtaskmanagement.task.task_comment.TaskCommentResponseDto;
-import com.example.advancedtaskmanagement.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +44,7 @@ public class TaskProgressService {
                 .map(mapper::toResponseDto)
                 .collect(Collectors.toList());
     }
-    // TaskProgress kaydını oluşturma (geçmiş durumları saklamak için)
+
     public TaskProgressResponseDto  addTaskProgress(Task task, TaskStatus status, String reason) {
         TaskProgress taskProgress = new TaskProgress();
         taskProgress.setTask(task);
@@ -57,10 +52,9 @@ public class TaskProgressService {
         taskProgress.setReason(reason);
         taskProgress.setChangedAt(new Date());
 
-        // TaskProgress'i kaydet
+
         taskProgress = repository.save(taskProgress);
 
-        // TaskProgress'i DTO'ya dönüştürme ve geri döndürme
         return mapper.toResponseDto(taskProgress);
     }
 }

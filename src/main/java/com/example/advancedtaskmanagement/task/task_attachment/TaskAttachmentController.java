@@ -11,14 +11,6 @@ import java.util.List;
 @RequestMapping("v1/task-attachments")
 public class TaskAttachmentController {
 
-    /*
-    Bu entity, bir göreve ait dosya eklerini temsil ediyor.
-    **
-    Dosyaları gerçek anlamda yüklemek için MultipartFile ile @RequestParam
-     veya @ModelAttribute kullanman gerekebilir.
-      Ancak şu an DTO üzerinden String filePath gönderdiğimiz için @RequestBody ile ilerliyoruz.
-     */
-
     private final TaskAttachmentService taskAttachmentService;
 
     public TaskAttachmentController(TaskAttachmentService taskAttachmentService) {

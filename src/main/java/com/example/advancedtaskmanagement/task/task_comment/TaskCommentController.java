@@ -9,8 +9,6 @@ import java.util.List;
 @RequestMapping("/v1/task-comments")
 public class TaskCommentController {
 
-
-
     private final TaskCommentService taskCommentService;
 
     public TaskCommentController(TaskCommentService taskCommentService) {
@@ -29,15 +27,15 @@ public class TaskCommentController {
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-        // TODO: implement
-        return null;
+        taskCommentService.deleteComment(commentId);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{commentId}")
     public ResponseEntity<TaskCommentResponseDto> updateComment(
             @PathVariable Long commentId,
             @RequestBody TaskCommentRequestDto request) {
-        // TODO: implement
-        return null;
+
+        return ResponseEntity.ok(taskCommentService.updateComment(commentId, request));
     }
 }
