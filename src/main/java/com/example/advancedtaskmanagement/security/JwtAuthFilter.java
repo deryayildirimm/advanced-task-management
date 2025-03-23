@@ -1,7 +1,6 @@
 package com.example.advancedtaskmanagement.security;
 
-import com.example.advancedtaskmanagement.service.JwtService;
-import com.example.advancedtaskmanagement.service.UserService;
+import com.example.advancedtaskmanagement.user.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String userName = null;
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            userName = jwtService.extractUser(token);
+            userName = jwtService.extractUsername(token);
         }
 
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
