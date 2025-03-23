@@ -1,4 +1,4 @@
-package com.example.advancedtaskmanagement.dto;
+package com.example.advancedtaskmanagement.security;
 
 public record AuthRequest(
         String username,

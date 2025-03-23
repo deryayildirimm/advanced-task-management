@@ -9,7 +9,7 @@ import java.util.Date;
 public class BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // ID'nin otomatik artırılmasını sağlar
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column

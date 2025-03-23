@@ -1,4 +1,4 @@
-package com.example.advancedtaskmanagement.model;
+package com.example.advancedtaskmanagement.task;
 
 public enum TaskPriority {
 

@@ -1,14 +1,12 @@
-package com.example.advancedtaskmanagement.dto;
+package com.example.advancedtaskmanagement.security;
 
-import com.example.advancedtaskmanagement.model.Role;
-import lombok.Builder;
+import com.example.advancedtaskmanagement.user.Role;
 import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Builder
 public class CreateUserRequest {
 
     String name;
