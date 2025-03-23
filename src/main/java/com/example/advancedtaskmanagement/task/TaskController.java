@@ -1,6 +1,7 @@
 package com.example.advancedtaskmanagement.task;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,52 +19,46 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(@RequestBody TaskRequestDto request) {
-        // TODO: implement
-        return null;
+        return ResponseEntity.ok(taskService.createTask(request));
     }
 
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
-        // TODO: implement
-        return null;
+       List<TaskResponseDto> taskList = taskService.getAll();
+        return ResponseEntity.status(HttpStatus.OK).body(taskList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
-        // TODO: implement
-        return null;
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id, @RequestBody TaskRequestDto request) {
-        // TODO: implement
-        return null;
+        return ResponseEntity.ok(taskService.getById(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        // TODO: implement
-        return null;
+        taskService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
-    // 🔹 Belirli bir projeye ait task'ları getir
+    //  Belirli bir projeye ait task'ları getir
     @GetMapping("/project/{projectId}")
     public ResponseEntity<List<TaskResponseDto>> getTasksByProjectId(@PathVariable Long projectId) {
-        // TODO: implement
-        return null;
+       List<TaskResponseDto> tasks = taskService.getByProjectId(projectId);
+        return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
-    // 🔹 Belirli bir kullanıcıya atanmış task'ları getir
+    //  Belirli bir kullanıcıya atanmış task'ları getir
     @GetMapping("/assignee/{userId}")
     public ResponseEntity<List<TaskResponseDto>> getTasksByAssignee(@PathVariable Long userId) {
-        // TODO: implement
-        return null;
+
+        List<TaskResponseDto> taskList = taskService.getByAssigneeId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(taskList);
     }
 
-    // 🔹 Bir task'ın sadece statüsünü güncelle
+
     @PatchMapping("/{taskId}/status")
-    public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatus status) {
-        // TODO: implement
-        return null;
+    public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatus status , @RequestBody String reason) {
+
+        TaskResponseDto taskResponse = taskService.updateTaskStatus(taskId, status, reason);
+        return ResponseEntity.status(HttpStatus.OK).body(taskResponse);
     }
 }

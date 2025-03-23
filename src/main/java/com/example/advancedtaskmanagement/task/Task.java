@@ -1,24 +1,30 @@
-package com.example.advancedtaskmanagement.model;
+package com.example.advancedtaskmanagement.task;
 
+import com.example.advancedtaskmanagement.common.BaseEntity;
+import com.example.advancedtaskmanagement.project.Project;
+import com.example.advancedtaskmanagement.task.task_comment.TaskComment;
+import com.example.advancedtaskmanagement.task.task_progress.TaskProgress;
+import com.example.advancedtaskmanagement.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Task {
+public class Task extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     private String title;
     private String description;
+
+    private String acceptanceCriteria;
 
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;

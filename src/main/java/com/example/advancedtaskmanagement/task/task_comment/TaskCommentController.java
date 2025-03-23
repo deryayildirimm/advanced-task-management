@@ -9,13 +9,7 @@ import java.util.List;
 @RequestMapping("/v1/task-comments")
 public class TaskCommentController {
 
-    /*
-    Metot	Açıklama
-    POST /api/task-comments	Bir göreve yorum ekler.
-    GET /api/task-comments/task/{taskId}	Bir göreve ait tüm yorumları getirir.
-    DELETE /api/task-comments/{commentId}	Belirli bir yorumu siler.
-    PUT /api/task-comments/{commentId}	Yorumu günceller.
-     */
+
 
     private final TaskCommentService taskCommentService;
 
@@ -25,14 +19,12 @@ public class TaskCommentController {
 
     @PostMapping
     public ResponseEntity<TaskCommentResponseDto> addCommentToTask(@RequestBody TaskCommentRequestDto request) {
-        // TODO: implement
-        return null;
+        return ResponseEntity.ok(taskCommentService.addComment(request));
     }
 
     @GetMapping("/task/{taskId}")
     public ResponseEntity<List<TaskCommentResponseDto>> getCommentsByTaskId(@PathVariable Long taskId) {
-        // TODO: implement
-        return null;
+        return ResponseEntity.ok(taskCommentService.getByTaskId(taskId));
     }
 
     @DeleteMapping("/{commentId}")

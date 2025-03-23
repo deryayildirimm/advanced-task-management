@@ -2,7 +2,9 @@ package com.example.advancedtaskmanagement.task.task_attachment;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,20 +26,21 @@ public class TaskAttachmentController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskAttachmentResponseDto> addAttachmentToTask(@RequestBody TaskAttachmentRequestDto request) {
-        // TODO: implement
-        return null;
+    public ResponseEntity<TaskAttachmentResponseDto> addAttachmentToTask(
+            @RequestParam("taskId") Long taskId,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        return ResponseEntity.ok(taskAttachmentService.uploadAttachment(taskId, file));
     }
 
     @GetMapping("/task/{taskId}")
     public ResponseEntity<List<TaskAttachmentResponseDto>> getAttachmentsByTaskId(@PathVariable Long taskId) {
-        // TODO: implement
-        return null;
+        return ResponseEntity.ok(taskAttachmentService.getAttachmentsByTaskId(taskId));
     }
 
     @DeleteMapping("/{attachmentId}")
     public ResponseEntity<Void> deleteAttachment(@PathVariable Long attachmentId) {
-        // TODO: implement
-        return null;
+        taskAttachmentService.deleteAttachment(attachmentId);
+        return ResponseEntity.noContent().build();
     }
 }
