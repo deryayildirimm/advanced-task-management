@@ -33,4 +33,10 @@ public class ProjectUserAssignmentController {
         return ResponseEntity.noContent().build();
 
     }
+
+    @GetMapping("/project/{projectId}/members")
+    public ResponseEntity<List<TeamMemberDto>> getProjectMembers(@PathVariable Long projectId) {
+        List<TeamMemberDto> members = assignmentService.getTeamMembersByProjectId(projectId);
+        return ResponseEntity.ok(members);
+    }
 }

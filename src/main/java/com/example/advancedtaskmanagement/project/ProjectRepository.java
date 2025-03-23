@@ -16,15 +16,14 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> findByIsDeletedFalse();
 
-    @Query(value = "SELECT * FROM project p WHERE (:title IS NULL OR p.title LIKE %:title%)" +
+    @Query(value = "SELECT p FROM Project p WHERE (:title IS NULL OR p.title LIKE %:title%)" +
             " AND (:status IS NULL OR p.status = :status)" +
-            " AND (:departmentId IS NULL OR p.department_id = :departmentId)" +
-            " AND (:startDate IS NULL OR p.start_date >= :startDate)" +
-            " AND (:endDate IS NULL OR p.end_date <= :endDate)" +
-            " AND p.is_deleted = false",
-            nativeQuery = true)
+            " AND (:departmentId IS NULL OR p.department.id = :departmentId)" +
+            " AND (:startDate IS NULL OR p.startDate >= :startDate)" +
+            " AND (:endDate IS NULL OR p.endDate <= :endDate)" +
+            " AND p.isDeleted = false")
     List<Project> filterProjects(@Param("title") String title,
-                                 @Param("status") String status,
+                                 @Param("status") ProjectStatus status,
                                  @Param("departmentId") Long departmentId,
                                  @Param("startDate") Date startDate,
                                  @Param("endDate") Date endDate);

@@ -49,7 +49,6 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
 
-    // 3. Proje durumu güncelleme
     @PutMapping("/{projectId}/status")
     public ResponseEntity<ProjectResponseDto> updateProjectStatus(@PathVariable Long projectId,
                                                                   @RequestParam ProjectStatus status) {
@@ -63,25 +62,25 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.OK).body(project);
     }
 
-    // 6. Projeye ait task'ları getirme
+
     @GetMapping("/{projectId}/tasks")
     public ResponseEntity<List<TaskResponseDto>> getTasksByProject(@PathVariable Long projectId) {
         List<TaskResponseDto> tasks = projectService.getTasksByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(tasks);
     }
 
-    // 8. Proje silme (passive delete)
+
     @DeleteMapping("/{projectId}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long projectId) {
         projectService.deleteProject(projectId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    //9. Proje filtreleme
+
     @GetMapping("/filter")
     public ResponseEntity<List<ProjectResponseDto>> filterProjects(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String status,
+            @RequestParam(required = false) ProjectStatus status,
             @RequestParam(required = false) Long departmentId,
             @RequestParam(required = false) Date startDate,
             @RequestParam(required = false) Date endDate) {
@@ -96,15 +95,6 @@ public class ProjectController {
     }
 
 
-    // 10. Assign member to Project
- /*   @PutMapping("/{projectId}/assign-member")
-    public ResponseEntity<ProjectResponseDto> assignMemberToProject(@PathVariable Long projectId,
-                                                                    @RequestParam Long userId) {
-        ProjectResponseDto updatedProject = projectService.assignMemberToProject(projectId, userId);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
-    }
-*/
-    // sanırım bu kısım task controller tarafında olmalı. tam bilemedim
     // 11. Update Task Status within a Project
     @PutMapping("/{projectId}/tasks/{taskId}/status")
     public ResponseEntity<TaskResponseDto> updateTaskStatus(@PathVariable Long projectId,

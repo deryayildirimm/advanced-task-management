@@ -23,7 +23,7 @@ public class Project extends BaseEntity {
     private String title;
     private String description;
 
-    // Başlangıç ve Bitiş Tarihleri
+
     private Date startDate;
     private Date endDate;
 
@@ -36,4 +36,5 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks;
+
 }

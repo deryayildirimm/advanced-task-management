@@ -1,6 +1,7 @@
-package com.example.advancedtaskmanagement.security;
+package com.example.advancedtaskmanagement.config;
 
-import com.example.advancedtaskmanagement.service.UserService;
+import com.example.advancedtaskmanagement.security.JwtAuthFilter;
+import com.example.advancedtaskmanagement.user.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,11 +40,13 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(x ->
-                        x.requestMatchers("/auth/welcome/**", "/auth/addNewUser/**", "/auth/generateToken/**").permitAll()
+                        x.requestMatchers("/auth/welcome/**", "v1/projects/**" , "/auth/addNewUser/**", "/auth/generateToken/**").permitAll()
+
                 )
                 .authorizeHttpRequests(x ->
                         x.requestMatchers("/auth/user").authenticated()
                                 .requestMatchers("/auth/admin").hasRole("ADMIN")
+
                 )
                 .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())

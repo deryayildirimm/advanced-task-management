@@ -2,11 +2,9 @@ package com.example.advancedtaskmanagement.project.project_user_assignment;
 
 import com.example.advancedtaskmanagement.project.Project;
 import com.example.advancedtaskmanagement.project.ProjectRepository;
-import com.example.advancedtaskmanagement.project.ProjectService;
 import com.example.advancedtaskmanagement.security.AuthService;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserRepository;
-import com.example.advancedtaskmanagement.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -71,5 +69,20 @@ public class ProjectUserAssignmentService {
         ProjectUserAssignment saved = assignmentRepository.save(assignment);
 
         return mapper.toDto(saved);
+    }
+
+    public List<TeamMemberDto> getTeamMembersByProjectId(Long projectId) {
+        List<ProjectUserAssignment> assignments = assignmentRepository.findByProjectIdWithUser(projectId);
+
+        return assignments.stream()
+                .map(a -> {
+                    User u = a.getUser();
+                    return new TeamMemberDto(
+                            u.getId(),
+                            u.getUsername(),
+                            a.getRole().name()
+                    );
+                })
+                .toList();
     }
 }

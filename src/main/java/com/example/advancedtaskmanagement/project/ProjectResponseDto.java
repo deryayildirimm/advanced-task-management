@@ -1,9 +1,11 @@
 package com.example.advancedtaskmanagement.project;
 
+import com.example.advancedtaskmanagement.project.project_user_assignment.TeamMemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
