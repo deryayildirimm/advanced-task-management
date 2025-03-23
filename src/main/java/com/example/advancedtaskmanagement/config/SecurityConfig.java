@@ -46,6 +46,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(x ->
                         x.requestMatchers("/auth/user").authenticated()
                                 .requestMatchers("/auth/admin").hasRole("ADMIN")
+                                .requestMatchers("/v1/projects/**").hasAnyRole("PROJECT_MANAGER", "PROJECT_GROUP_MANAGER")
+                                .requestMatchers("/v1/tasks/**").hasAnyRole("PROJECT_MANAGER", "PROJECT_GROUP_MANAGER", "TEAM_MEMBER")
+                                .requestMatchers("/v1/users/**").hasRole("PROJECT_GROUP_MANAGER")
+                                .requestMatchers("/v1/task-comments/**").hasAnyRole("PROJECT_MANAGER", "TEAM_MEMBER")
+                                .requestMatchers("/v1/task-progress/**").hasAnyRole("PROJECT_MANAGER", "TEAM_MEMBER")
+                                .requestMatchers("/v1/task-attachments/**").hasAnyRole("PROJECT_MANAGER", "TEAM_MEMBER")
 
                 )
                 .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
