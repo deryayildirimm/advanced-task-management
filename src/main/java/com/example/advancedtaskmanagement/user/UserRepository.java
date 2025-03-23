@@ -1,6 +1,5 @@
-package com.example.advancedtaskmanagement.repository;
+package com.example.advancedtaskmanagement.user;
 
-import com.example.advancedtaskmanagement.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

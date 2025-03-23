@@ -1,9 +1,6 @@
-package com.example.advancedtaskmanagement.service;
+package com.example.advancedtaskmanagement.user;
 
-import com.example.advancedtaskmanagement.dto.CreateUserRequest;
-import com.example.advancedtaskmanagement.model.Role;
-import com.example.advancedtaskmanagement.model.User;
-import com.example.advancedtaskmanagement.repository.UserRepository;
+import com.example.advancedtaskmanagement.security.CreateUserRequest;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
