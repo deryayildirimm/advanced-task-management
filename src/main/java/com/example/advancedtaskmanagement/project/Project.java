@@ -1,24 +1,31 @@
-package com.example.advancedtaskmanagement.model;
+package com.example.advancedtaskmanagement.project;
 
+import com.example.advancedtaskmanagement.common.BaseEntity;
+import com.example.advancedtaskmanagement.department.Department;
+import com.example.advancedtaskmanagement.task.Task;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 
+
+@Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Project {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Project extends BaseEntity {
 
     private String title;
     private String description;
+
+    // Başlangıç ve Bitiş Tarihleri
+    private Date startDate;
+    private Date endDate;
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
