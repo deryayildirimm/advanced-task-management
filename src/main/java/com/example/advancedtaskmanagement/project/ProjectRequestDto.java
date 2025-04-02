@@ -1,20 +1,20 @@
 package com.example.advancedtaskmanagement.project;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
 
-@Getter
-@AllArgsConstructor
-public class ProjectRequestDto {
 
-    private String title;
-    private String description;
-    private Date startDate;
-    private Date endDate;
-    private ProjectStatus status;
-    private Long departmentId;
-
-
-}
+public record ProjectRequestDto(
+        @NotBlank
+         String title,
+         String description,
+         @NotNull
+         Date startDate ,
+         Date endDate,
+         @NotNull
+         ProjectStatus status,
+         @NotNull
+         Long departmentId
+) { }
