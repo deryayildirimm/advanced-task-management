@@ -22,7 +22,11 @@ public class JwtService {
 
 
     // bir türlü düzelmedi sonra bak
-    private static final String SECRET = "0ff74906af79795bf515cda89f572e6234ad1128e30a2f4457e92d40ae9c5f8ce7405d8202d0a1dd9a648bc340080de18cb466ce4afb2a084d3e2dd7cfac15d150f17afc10558bfc3b398aff4e34bee5e4a4fc4a7adce92464b818ba0db710d79c0be1e51996e2495b26db7bda71fe59edd09e1555a19bfc685060bfcc1ffd4d";
+    private final String jwtSecret ;
+
+    public JwtService(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
@@ -76,7 +80,7 @@ public class JwtService {
     }
 
     private Key getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

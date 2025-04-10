@@ -6,18 +6,17 @@ import com.example.advancedtaskmanagement.project.Project;
 import com.example.advancedtaskmanagement.user.Role;
 import com.example.advancedtaskmanagement.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDate;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class ProjectUserAssignment extends BaseEntity {
-
 
     @ManyToOne
     @JoinColumn(name = "project_id")
@@ -29,5 +28,8 @@ public class ProjectUserAssignment extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column
+    private LocalDate assignedAt;
 
 }

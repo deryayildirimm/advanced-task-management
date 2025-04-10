@@ -7,6 +7,7 @@ import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class ProjectUserAssignmentService {
                 .orElseThrow(() -> new RuntimeException("Assignment not found"));
 
         assignment.setDeleted(true);
-        assignment.setDeletedAt(new Date());
+        assignment.setDeletedAt(LocalDateTime.now());
         assignment.setDeletedBy(authService.getCurrentUser().getId());
         assignmentRepository.save(assignment);
     }

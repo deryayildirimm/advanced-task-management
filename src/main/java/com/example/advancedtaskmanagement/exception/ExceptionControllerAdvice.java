@@ -1,5 +1,6 @@
 package com.example.advancedtaskmanagement.exception;
 
+import com.example.advancedtaskmanagement.common.ErrorMessages;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,7 +26,12 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllUncaught(Exception ex) {
-        return buildErrorResponse("Beklenmeyen bir hata oluştu", HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildErrorResponse(ErrorMessages.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UserAlreadyAssignedException.class)
+    public ResponseEntity<Object> handleUserAlreadyAssigned(UserAlreadyAssignedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {

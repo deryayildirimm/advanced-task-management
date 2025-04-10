@@ -4,10 +4,7 @@ import com.example.advancedtaskmanagement.common.BaseEntity;
 import com.example.advancedtaskmanagement.task.TaskStatus;
 import com.example.advancedtaskmanagement.task.Task;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -16,6 +13,7 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class TaskProgress extends BaseEntity {
 
     @ManyToOne

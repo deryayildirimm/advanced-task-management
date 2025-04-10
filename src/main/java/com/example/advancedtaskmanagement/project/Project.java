@@ -4,12 +4,9 @@ import com.example.advancedtaskmanagement.common.BaseEntity;
 import com.example.advancedtaskmanagement.department.Department;
 import com.example.advancedtaskmanagement.task.Task;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -18,14 +15,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Project extends BaseEntity {
 
     private String title;
     private String description;
 
-
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
@@ -36,5 +33,7 @@ public class Project extends BaseEntity {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks;
+
+
 
 }

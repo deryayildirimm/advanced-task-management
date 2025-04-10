@@ -1,7 +1,10 @@
 package com.example.advancedtaskmanagement.project;
 
+import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignment;
+import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignmentRequestDto;
 import com.example.advancedtaskmanagement.task.TaskResponseDto;
-import com.example.advancedtaskmanagement.task.TaskStatus;
+import com.example.advancedtaskmanagement.user.Role;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +23,7 @@ public class ProjectController {
     }
 
     @PostMapping
-    public ResponseEntity<ProjectResponseDto> createProject(@RequestBody ProjectRequestDto dto) {
+    public ResponseEntity<ProjectResponseDto> createProject(@Valid @RequestBody ProjectRequestDto dto) {
         return new ResponseEntity<>(projectService.createProject(dto), HttpStatus.CREATED);
     }
 
@@ -30,18 +33,12 @@ public class ProjectController {
     }
 
     @PutMapping("/{projectId}")
-    public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable Long projectId,
+    public ResponseEntity<ProjectResponseDto> updateProject(@Valid  @PathVariable Long projectId,
                                                             @RequestBody ProjectRequestDto projectRequestDto) {
         ProjectResponseDto updatedProject = projectService.updateProject(projectId, projectRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
     }
 
-    @PutMapping("/{projectId}/status")
-    public ResponseEntity<ProjectResponseDto> updateProjectStatus(@PathVariable Long projectId,
-                                                                  @RequestParam ProjectStatus status) {
-        ProjectResponseDto updatedProject = projectService.updateProjectStatus(projectId, status);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedProject);
-    }
 
     @GetMapping("/{projectId}")
     public ResponseEntity<ProjectResponseDto> getProjectById(@PathVariable Long projectId) {
@@ -63,6 +60,34 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PostMapping("{projectId}/assignees")
+    public ResponseEntity<ProjectUserAssignment> assignUser(@PathVariable Long projectId, @RequestBody ProjectUserAssignmentRequestDto requestDto){
+      ProjectUserAssignment projectUserAssignment =  projectService.assignUserToProject(projectId, requestDto);
+      // 201 created
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectUserAssignment);
+    }
+
+    @PutMapping("{projectId}/assignees/{userId}")
+    public ResponseEntity<ProjectUserAssignment> updateUserRole(
+            @PathVariable Long projectId,
+            @PathVariable Long userId,
+            @RequestParam @Valid Role role
+            ) {
+
+        ProjectUserAssignment userAssignment = projectService.updateUserToProject(projectId, userId, role);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userAssignment);
+
+    }
+
+    @DeleteMapping("{projectId}/assignees/{userId}")
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable Long projectId,
+            @PathVariable Long userId) {
+         projectService.deleteUserFromProject(projectId,userId);
+         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 
     @GetMapping("/filter")
     public ResponseEntity<List<ProjectResponseDto>> filterProjects(
@@ -82,14 +107,5 @@ public class ProjectController {
     }
 
 
-
-    @PutMapping("/{projectId}/tasks/{taskId}/status")
-    public ResponseEntity<TaskResponseDto> updateTaskStatus(@PathVariable Long projectId,
-                                                            @PathVariable Long taskId,
-                                                            @RequestParam TaskStatus status,
-                                                            @RequestParam String reason) {
-        TaskResponseDto updatedTask = projectService.updateTaskStatus(projectId, taskId, status, reason);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedTask);
-    }
 
 }

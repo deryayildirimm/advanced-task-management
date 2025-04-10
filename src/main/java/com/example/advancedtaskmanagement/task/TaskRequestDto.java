@@ -1,19 +1,15 @@
 package com.example.advancedtaskmanagement.task;
 
 
+import com.example.advancedtaskmanagement.project.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public class TaskRequestDto {
-
-
-    private final String title;
-    private final String description;
-    private final TaskPriority priority;
-    private final TaskStatus status;
-    private final Long projectId; // Hangi proje için oluşturuluyor?
-    private final Long assignedUserId; // Kime atanıyor?
-
-}
+public record TaskRequestDto (
+        String description,
+        TaskPriority priority,
+        TaskStatus status,
+        String title,
+        String acceptanceCriteria,
+        Long assignedUserId
+) { }
