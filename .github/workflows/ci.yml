@@ -57,7 +57,7 @@ jobs:
 
       # 8️⃣ PostgreSQL servisini docker-compose ile başlat
       - name: Start Docker Compose (Postgres)
-        run: docker-compose up -d
+        run: docker compose up -d
 
       # 9️⃣ Servislerin ayağa kalkması için biraz bekle
       - name: Wait for PostgreSQL
@@ -69,7 +69,7 @@ jobs:
 
       # 1️⃣1️⃣ PostgreSQL’i durdur
       - name: Shutdown Docker Compose
-        run: docker-compose down
+        run: docker compose down
 
       # 1️⃣2️⃣ Docker'ı tekrar temizle (cihazdan kalanları sil)
       - name: Docker Prune After All
