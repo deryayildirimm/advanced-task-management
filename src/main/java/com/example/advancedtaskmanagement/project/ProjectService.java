@@ -1,54 +1,77 @@
 package com.example.advancedtaskmanagement.project;
 
+import com.example.advancedtaskmanagement.common.BaseService;
+import com.example.advancedtaskmanagement.common.ErrorMessages;
 import com.example.advancedtaskmanagement.department.Department;
-import com.example.advancedtaskmanagement.department.DepartmentRepository;
-import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignmentService;
+import com.example.advancedtaskmanagement.department.DepartmentService;
+import com.example.advancedtaskmanagement.exception.ExceptionHandler;
+import com.example.advancedtaskmanagement.exception.ResourceNotFoundException;
+import com.example.advancedtaskmanagement.exception.UserAlreadyAssignedException;
+import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignment;
+import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignmentRepository;
+import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignmentRequestDto;
 import com.example.advancedtaskmanagement.task.*;
+import com.example.advancedtaskmanagement.user.Role;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserService;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ProjectService {
+public class ProjectService extends BaseService<Project> {
 
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
     private final TaskMapper taskMapper;
+    private final DepartmentService departmentService;
+    private final ProjectUserAssignmentRepository projectUserAssignmentRepository;
     private final UserService userService;
-    private final TaskService taskService;
-    private final DepartmentRepository departmentRepository;
-    private final ProjectUserAssignmentService projectUserAssignmentService;
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectMapper projectMapper,
                           TaskMapper taskMapper,
-                          UserService userService,
-                          TaskService taskService, DepartmentRepository departmentRepository, ProjectUserAssignmentService projectUserAssignmentService) {
+                          DepartmentService departmentService,
+                          ProjectUserAssignmentRepository projectUserAssignmentRepository,
+                          UserService userService) {
+        super(projectRepository);
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.taskMapper = taskMapper;
+        this.departmentService = departmentService;
+        this.projectUserAssignmentRepository = projectUserAssignmentRepository;
         this.userService = userService;
-        this.taskService = taskService;
-        this.departmentRepository = departmentRepository;
-        this.projectUserAssignmentService = projectUserAssignmentService;
     }
 
     public ProjectResponseDto createProject(ProjectRequestDto dto) {
 
-        Department department = departmentRepository.findById(dto.getDepartmentId())
-                .orElseThrow(() -> new EntityNotFoundException("Department not found"));
-        Project project = projectMapper.toEntity(dto);
-        project.setDepartment(department);
-        Project savedProject = projectRepository.save(project);
-        return projectMapper.toResponseDto(savedProject);
+        // is there a department ?
+        Department department = departmentService.findDepartmentById(dto.departmentId());
+
+        ExceptionHandler.throwIf(dto.status().equals(ProjectStatus.CANCELLED) || dto.status().equals(ProjectStatus.COMPLETED) ,
+                () -> new IllegalArgumentException(ErrorMessages.PROJECT_STATUS_CANNOT_BE_CANCELLED_OR_COMPLETED_ON_CREATE));
+       ExceptionHandler.throwIf(!dto.startDate().isBefore(dto.endDate()) ,
+               () -> new IllegalArgumentException(ErrorMessages.START_DATE_BEFORE_END_DATE));
+
+
+        // create a new project
+        Project newProject = Project.builder().
+                title(dto.title()).
+                description(dto.description()).
+                status(dto.status()).
+                startDate(dto.startDate()).
+                endDate(dto.endDate()).
+                department(department).
+                build();
+
+        save(newProject);
+
+        // turn responseDTO and return
+        return projectMapper.toResponseDto(newProject);
     }
 
     public List<ProjectResponseDto> getAllProjects() {
@@ -60,60 +83,46 @@ public class ProjectService {
 
     public ProjectResponseDto getProjectById(Long id) {
 
-        Project project = projectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Project not found"));
+        Project project = findById(id);
         return projectMapper.toResponseDto(project);
     }
 
 
     public ProjectResponseDto updateProject(Long id, ProjectRequestDto projectRequestDTO) {
 
-        Project existingProject = projectRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
+        Project existingProject = findById(id);
 
+        Department updateDepartment = departmentService.findDepartmentById(projectRequestDTO.departmentId());
 
-        existingProject.setTitle(projectRequestDTO.getTitle());
-        existingProject.setDescription(projectRequestDTO.getDescription());
-        existingProject.setStatus(projectRequestDTO.getStatus());
-        existingProject.setStartDate(projectRequestDTO.getStartDate());
-        existingProject.setEndDate(projectRequestDTO.getEndDate());
+        ExceptionHandler.throwIf(!projectRequestDTO.startDate().isBefore(projectRequestDTO.endDate()) ,
+                () ->   new IllegalArgumentException(ErrorMessages.START_DATE_BEFORE_END_DATE)  );
 
+        existingProject.setTitle(projectRequestDTO.title());
+        existingProject.setDescription(projectRequestDTO.description());
+        existingProject.setStatus(projectRequestDTO.status());
+        existingProject.setStartDate(projectRequestDTO.startDate());
+        existingProject.setEndDate(projectRequestDTO.endDate());
+        existingProject.setDepartment(updateDepartment);
 
-
-        Project updatedProject = projectRepository.save(existingProject);
-
+        Project updatedProject = save(existingProject);
 
         return projectMapper.toResponseDto(updatedProject);
     }
+
     public List<TaskResponseDto> getTasksByProject(Long projectId) {
 
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
-
+        Project project = findById(projectId);
 
         return project.getTasks().stream()
                 .map(taskMapper::toTaskResponseDto)
                 .collect(Collectors.toList());
     }
 
-    public ProjectResponseDto updateProjectStatus(Long projectId, ProjectStatus status) {
+    private void checkIfUserAlreadyAssign(Long projectId, Long assignedUserId){
+        boolean isAssigned = projectUserAssignmentRepository
+                .findByProjectIdAndUserId(projectId, assignedUserId).isPresent();
+        ExceptionHandler.throwIf(isAssigned, () -> new UserAlreadyAssignedException(ErrorMessages.USER_ALREADY_ASSIGNED));
 
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
-
-        project.setStatus(status);
-        Project updatedProject = projectRepository.save(project);
-
-
-        return projectMapper.toResponseDto(updatedProject);
-    }
-
-    public TaskResponseDto updateTaskStatus(Long projectId, Long taskId, TaskStatus status, String reason) {
-
-        // Projeyi bul
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
-
-        return taskService.updateTaskStatus(taskId, status, reason);
     }
 
     public List<ProjectResponseDto> getProjectsByTitle(String title) {
@@ -125,7 +134,6 @@ public class ProjectService {
 
         public List<ProjectResponseDto> filterProjects(String title, ProjectStatus status, Long departmentId,  Date startDate, Date endDate) {
 
-
        List<Project> projects =  projectRepository.filterProjects(title, status, departmentId, startDate, endDate);
 
        return projects.stream().map(projectMapper::toResponseDto).collect(Collectors.toList());
@@ -133,27 +141,44 @@ public class ProjectService {
 
     public void deleteProject(Long projectId) {
 
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
-
-       project.setDeleted(true);
-       project.setDeletedAt(new Date());
-
-        Long userId = getCurrentUserId();
-
-
-        project.setDeletedBy(userId);
-
-        projectRepository.save(project);
+      softDelete(projectId);
     }
 
-    private Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User user) {
-            return user.getId();
-        }
-        throw new RuntimeException("User not authenticated");
+    public ProjectUserAssignment assignUserToProject(Long projectId, ProjectUserAssignmentRequestDto requestDto) {
+
+        Project project =findById(projectId);
+        User user = userService.findByUserId(requestDto.userId());
+
+        checkIfUserAlreadyAssign(project.getId(), user.getId());
+
+
+        ProjectUserAssignment projectUserAssignment = ProjectUserAssignment.builder()
+                .project(project)
+                .user(user)
+                .role(requestDto.role())
+                .assignedAt(LocalDate.now())
+                .build();
+
+      return  projectUserAssignmentRepository.save(projectUserAssignment);
+
+    }
+    public ProjectUserAssignment updateUserToProject(Long projectId, Long userId, Role role) {
+
+        ProjectUserAssignment projectUserAssignment = projectUserAssignmentRepository.findByProjectIdAndUserId(projectId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_NOT_ASSIGNED));
+
+        projectUserAssignment.setRole(role);
+
+        return projectUserAssignmentRepository.save(projectUserAssignment);
     }
 
+    public void deleteUserFromProject(Long projectId, Long userId) {
+
+        ProjectUserAssignment projectUserAssignment = projectUserAssignmentRepository.findByProjectIdAndUserId(projectId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_NOT_ASSIGNED));
+
+        projectUserAssignmentRepository.delete(projectUserAssignment);
+
+    }
 
 }

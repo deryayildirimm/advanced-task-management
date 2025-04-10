@@ -1,0 +1,80 @@
+name: CI - Java + Docker + Disk Cleanup
+
+on:
+  push:
+    branches: [ "main", "develop", "feature/**" ]
+  pull_request:
+    branches: [ "main", "develop", "feature/**" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      SPRING_SECURITY_USER: testuser
+      SPRING_SECURITY_PASSWORD: testpass123
+      JWT_SECRET: dummytoken1234567890dummytoken1234567890dummytoken1234567890dummytoken1234567890
+
+    steps:
+      #  Reponun içeriğini al
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      #  Başlangıçta disk durumunu kontrol et
+      - name: Check Disk Space Before Anything
+        run: df -h
+
+      #  Docker temizliği (önceki kalanlar silinir)
+      - name: Docker Prune Before Build
+        run: docker system prune -a -f
+
+      #  JDK 21 kur
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      #  Maven cache (gereksiz tekrar yüklemeleri engeller)
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      #  Maven ile projeyi build et
+      - name: Build with Maven
+        run: mvn clean install -DskipTests
+
+      # target klasörlerini sil (disk boşaltma için – opsiyonel)
+      - name: Clean target folders
+        run: find . -type d -name "target" -exec rm -rf {} +
+
+      - name: Use .env.ci in CI
+        run: echo "ENV_FILE=.env.ci" >> $GITHUB_ENV
+
+      #  PostgreSQL servisini docker-compose ile başlat
+      - name: Start Docker Compose (Postgres)
+        run: docker compose up -d
+
+      #  Servislerin ayağa kalkması için biraz bekle
+      - name: Wait for PostgreSQL
+        run: sleep 10
+
+      #  (Opsiyonel) Testler buraya eklenebilir
+      - name: Run Tests (placeholder)
+        run: echo "Burada test komutları çalışacak"
+
+      #  PostgreSQL’i durdur
+      - name: Shutdown Docker Compose
+        run: docker compose down
+
+      #  Docker'ı tekrar temizle (cihazdan kalanları sil)
+      - name: Docker Prune After All
+        run: docker system prune -a -f
+
+      #  Disk alanını son kez kontrol et
+      - name: Check Disk Space After Cleanup
+        run: df -h

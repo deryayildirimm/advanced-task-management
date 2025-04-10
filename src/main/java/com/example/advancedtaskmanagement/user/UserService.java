@@ -29,8 +29,8 @@ public class UserService implements UserDetailsService {
         return user.orElseThrow(EntityNotFoundException::new);
     }
 
-    public long countUsers() {
-        return userRepository.count();
+    public User findByUserId(Long userId){
+        return userRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
     }
 
     public Optional<User> getByUsername(String username) {
