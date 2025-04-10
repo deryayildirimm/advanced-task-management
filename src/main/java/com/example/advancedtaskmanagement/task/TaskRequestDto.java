@@ -10,7 +10,6 @@ public record TaskRequestDto (
         TaskPriority priority,
         TaskStatus status,
         String title,
-        Project project,
         String acceptanceCriteria,
         Long assignedUserId
 ) { }

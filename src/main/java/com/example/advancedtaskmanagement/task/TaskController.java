@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/tasks")
+@RequestMapping("/v1")
 public class TaskController {
 
     private final TaskService taskService;
@@ -17,9 +17,11 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping
-    public ResponseEntity<TaskResponseDto> createTask(@RequestBody TaskRequestDto request) {
-        return ResponseEntity.ok(taskService.createTask(request));
+    @PostMapping("projects/{projectId}/tasks")
+    public ResponseEntity<TaskResponseDto> createTask(
+            @PathVariable Long projectId,
+            @RequestBody TaskRequestDto request) {
+        return ResponseEntity.ok(taskService.createTask(projectId,request));
     }
 
     @GetMapping
@@ -54,9 +56,10 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(taskList);
     }
 
-    @PatchMapping("/{taskId}/status")
-    public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatus status , @RequestBody String reason) {
-        TaskResponseDto taskResponse = taskService.updateTaskStatus(taskId, status, reason);
+    // mesela bu da
+    @PatchMapping("tasks/{taskId}/status")
+    public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatusRequest statusRequest) {
+        TaskResponseDto taskResponse = taskService.updateTaskStatus(taskId, statusRequest);
         return ResponseEntity.status(HttpStatus.OK).body(taskResponse);
     }
 }

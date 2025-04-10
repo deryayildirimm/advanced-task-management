@@ -4,10 +4,13 @@ import com.example.advancedtaskmanagement.task.Task;
 import com.example.advancedtaskmanagement.task.TaskRepository;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,18 +31,23 @@ public class TaskCommentService {
         this.taskCommentMapper = taskCommentMapper;
     }
 
+    protected TaskComment findTaskCommentById(Long id){
+        return taskCommentRepository.findByTaskIdAndIsDeletedFalse(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
     public TaskCommentResponseDto addComment(TaskCommentRequestDto request) {
-        Task task = taskRepository.findById(request.getTaskId())
+        Task task = taskRepository.findById(request.taskId())
                 .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        User user = userRepository.findById(request.getUserId())
+        User user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         TaskComment comment = TaskComment.builder()
                 .task(task)
                 .user(user)
-                .content(request.getComment())
-                .createdAt(new Date())
+                .content(request.comment())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         return taskCommentMapper.toDto(taskCommentRepository.save(comment));
@@ -57,7 +65,7 @@ public class TaskCommentService {
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
         comment.setDeleted(true);
-        comment.setDeletedAt(new Date());
+        comment.setDeletedAt(LocalDateTime.now());
         comment.setDeletedBy(getCurrentUserId());
         taskCommentRepository.save(comment);
     }
@@ -76,7 +84,7 @@ public class TaskCommentService {
         TaskComment comment = taskCommentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        comment.setContent(request.getComment());
+        comment.setContent(request.comment());
         return taskCommentMapper.toDto(taskCommentRepository.save(comment));
     }
 

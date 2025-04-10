@@ -1,13 +1,13 @@
 package com.example.advancedtaskmanagement.project;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record ProjectResponseDto (
         Long id,
         String title,
         String description,
-        Date startDate,
-        Date endDate,
+        LocalDate startDate,
+        LocalDate endDate,
         ProjectStatus status,
         String departmentName
 ){ }

@@ -22,6 +22,10 @@ public class DepartmentService {
         this.projectMapper = projectMapper;
     }
 
+    public Department findDepartmentById(Long id) {
+        return departmentRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
     public DepartmentResponseDto createDepartment(DepartmentRequestDto departmentRequestDTO) {
         Department department = departmentMapper.departmentRequestDTOToDepartment(departmentRequestDTO);
         Department savedDepartment =  departmentRepository.save(department);
@@ -36,7 +40,7 @@ public class DepartmentService {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Department not found"));
 
-        department.setName(departmentRequestDTO.getName());
+        department.setName(departmentRequestDTO.name());
 
 
         Department updatedDepartment = departmentRepository.save(department);

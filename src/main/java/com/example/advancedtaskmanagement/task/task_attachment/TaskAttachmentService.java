@@ -2,6 +2,7 @@ package com.example.advancedtaskmanagement.task.task_attachment;
 
 import com.example.advancedtaskmanagement.task.Task;
 import com.example.advancedtaskmanagement.task.TaskRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +27,12 @@ public class TaskAttachmentService {
         this.taskRepository = taskRepository;
         this.taskAttachmentMapper = taskAttachmentMapper;
     }
+
+    protected TaskAttachment findTaskAttachmentById(Long id){
+        return repository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+    }
+
 
     public TaskAttachmentResponseDto uploadAttachment(Long taskId, MultipartFile file) throws IOException {
         Task task = taskRepository.findById(taskId)

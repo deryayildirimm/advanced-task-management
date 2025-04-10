@@ -10,6 +10,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/v1/departments")
 public class DepartmentController {
+    /*
+    TODO: getalldepartments kısmı eksik
+     */
 
     private final DepartmentService departmentService;
 

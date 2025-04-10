@@ -6,10 +6,7 @@ import com.example.advancedtaskmanagement.task.task_comment.TaskComment;
 import com.example.advancedtaskmanagement.task.task_progress.TaskProgress;
 import com.example.advancedtaskmanagement.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -18,6 +15,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Task extends BaseEntity {
 
 

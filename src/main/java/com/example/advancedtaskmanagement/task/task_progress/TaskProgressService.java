@@ -27,13 +27,19 @@ public class TaskProgressService {
         this.taskProgressRepository = taskProgressRepository;
     }
 
+
+    protected TaskProgress getTaskProgressById(Long id) {
+        return taskProgressRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+
     public TaskProgressResponseDto addProgress(TaskProgressRequestDto request) {
-        Task task = taskRepository.findById(request.getTaskId()).orElseThrow(EntityNotFoundException::new);
+        Task task = taskRepository.findById(request.taskId()).orElseThrow(EntityNotFoundException::new);
 
         TaskProgress progress = TaskProgress.builder()
                 .task(task)
                 .changedAt(new Date())
-                .reason(request.getReason())
+                .reason(request.reason())
                 .build();
 
         return mapper.toResponseDto(taskProgressRepository.save(progress));

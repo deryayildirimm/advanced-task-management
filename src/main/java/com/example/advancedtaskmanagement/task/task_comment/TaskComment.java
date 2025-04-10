@@ -4,18 +4,16 @@ import com.example.advancedtaskmanagement.common.BaseEntity;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.task.Task;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class TaskComment extends BaseEntity {
 
     @ManyToOne
@@ -27,6 +25,7 @@ public class TaskComment extends BaseEntity {
     private User user;
 
     private String content;
-    private Date createdAt;
+
+    private LocalDateTime createdAt;
 
 }
