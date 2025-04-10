@@ -29,6 +29,11 @@ public class ExceptionControllerAdvice {
         return buildErrorResponse(ErrorMessages.UNEXPECTED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(UserAlreadyAssignedException.class)
+    public ResponseEntity<Object> handleUserAlreadyAssigned(UserAlreadyAssignedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.CONFLICT);
+    }
+
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
