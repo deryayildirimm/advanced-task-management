@@ -54,13 +54,15 @@ API dokümanları ve test endpointleri için Swagger arayüzü kullanılmaktadı
 
 ## ✨ Canlı Ortam (Render.com)
 
-Backend uygulaması Docker image olarak build edilip Render.com'a otomatik olarak deploy edilmektedir.
+Backend uygulaması Docker image olarak build edilip Render.com'a otomatik olarak deploy edilmektedir.  Uygulamanın her zaman çalışır durumda olduğunu izlemek için UptimeRobot kullanılmıştır.  
 
-> 🔧 Yayındaki proje linki: [https://advanced-task-management.onrender.com](https://advanced-task-management.onrender.com)
+> 🔧 Yayındaki proje linki: [https://advanced-task-management.onrender.com/auth/welcome](https://advanced-task-management.onrender.com/auth/welcome)
 
 Uygulamanın frontend tarafı ileride geliştirilecektir. şu an için yalnızca backend endpointlerine ulaşılabilir.
 
 ---
+
+
 
 ## 🌐 Teknolojiler
 
