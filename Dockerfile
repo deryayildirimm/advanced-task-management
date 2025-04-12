@@ -1,5 +1,5 @@
 # 1️⃣ Java 21 JDK içeren base image
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 
 # 2️⃣ Uygulamanın çalışacağı klasörü ayarla
 WORKDIR /app
