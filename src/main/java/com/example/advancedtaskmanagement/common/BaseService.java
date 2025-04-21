@@ -1,13 +1,13 @@
 package com.example.advancedtaskmanagement.common;
 
 import com.example.advancedtaskmanagement.exception.ResourceNotFoundException;
+import com.example.advancedtaskmanagement.exception.UserNotAuthenticatedException;
 import com.example.advancedtaskmanagement.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public abstract class BaseService<T extends BaseEntity> {
 
@@ -22,9 +22,6 @@ public abstract class BaseService<T extends BaseEntity> {
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.RESOURCE_NOT_FOUND + id));
     }
 
-    public List<T> findAll() {
-        return repository.findAll();
-    }
     public T save(T entity) {
         return repository.save(entity);
     }
@@ -41,7 +38,7 @@ public abstract class BaseService<T extends BaseEntity> {
         if (authentication != null && authentication.getPrincipal() instanceof User user) {
             return user.getId();
         }
-        throw new RuntimeException("User not authenticated");
+        throw new UserNotAuthenticatedException(ErrorMessages.USER_NOT_AUTHENTICATED);
     }
 
 }

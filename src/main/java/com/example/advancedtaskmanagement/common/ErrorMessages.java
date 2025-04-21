@@ -7,6 +7,7 @@ public class ErrorMessages {
     public static final String DEPARTMENT_NOT_FOUND = "Department not found.";
     public static final String PROJECT_NOT_FOUND = "Project not found.";
     public static final String TASK_NOT_FOUND = "Task not found.";
+    public static final String TASK_ATTACHMENT_NOT_FOUND = "Task attachment not found.";
     public static final String INVALID_REQUEST = "Invalid request.";
     public static final String USER_ALREADY_ASSIGNED = "User already assigned to this project.";
     public static final String USER_NOT_ASSIGNED = "User is not assigned to this project.";
@@ -14,6 +15,10 @@ public class ErrorMessages {
     public static final String UNEXPECTED_ERROR = "Unexpected error.";
     public static final String PROJECT_STATUS_CANNOT_BE_CANCELLED_OR_COMPLETED_ON_CREATE =
             "Project status cannot be 'Cancelled' or 'Completed' when creating a new project.";
+    public static final String USER_NOT_AUTHENTICATED = "User is not authenticated.";
+
+    public static final String FILE_UPLOAD_FAILED = "File upload failed";
+    public static final String FILE_DELETE_FAILED = "File deletion failed";
 
     // Business Rules
     public static final String STATUS_ALREADY_COMPLETED = "Completed tasks cannot be modified";

@@ -39,6 +39,16 @@ public class ExceptionControllerAdvice {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserNotAuthenticatedException.class)
+    public ResponseEntity<Object> handleUserNotAuthenticated(UserNotAuthenticatedException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED); // 401
+    }
+
+    @ExceptionHandler(FileStorageException.class)
+    public ResponseEntity<Object> handleFileStorageException(FileStorageException ex) {
+        return buildErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private ResponseEntity<Object> buildErrorResponse(String message, HttpStatus status) {
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", LocalDateTime.now());
