@@ -5,10 +5,12 @@ import com.example.advancedtaskmanagement.project.project_user_assignment.Projec
 import com.example.advancedtaskmanagement.task.TaskResponseDto;
 import com.example.advancedtaskmanagement.user.Role;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -93,15 +95,10 @@ public class ProjectController {
     public ResponseEntity<List<ProjectResponseDto>> filterProjects(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) ProjectStatus status,
-            @RequestParam(required = false) Long departmentId,
-            @RequestParam(required = false) Date startDate,
-            @RequestParam(required = false) Date endDate) {
+            @RequestParam(required = false) Long departmentId) {
 
-        List<ProjectResponseDto> projects = projectService.filterProjects(title, status, departmentId, startDate, endDate);
 
-        if (projects.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        List<ProjectResponseDto> projects = projectService.filterProjects(title, status, departmentId);
 
         return ResponseEntity.status(HttpStatus.OK).body(projects);
     }

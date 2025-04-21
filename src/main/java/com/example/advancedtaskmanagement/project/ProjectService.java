@@ -132,9 +132,9 @@ public class ProjectService extends BaseService<Project> {
                 .collect(Collectors.toList());
     }
 
-        public List<ProjectResponseDto> filterProjects(String title, ProjectStatus status, Long departmentId,  Date startDate, Date endDate) {
+        public List<ProjectResponseDto> filterProjects(String title, ProjectStatus status, Long departmentId) {
 
-       List<Project> projects =  projectRepository.filterProjects(title, status, departmentId, startDate, endDate);
+       List<Project> projects =  projectRepository.filterProjects(title, status, departmentId);
 
        return projects.stream().map(projectMapper::toResponseDto).collect(Collectors.toList());
     }
