@@ -1,6 +1,4 @@
 package com.example.advancedtaskmanagement.task;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.util.List;
 
