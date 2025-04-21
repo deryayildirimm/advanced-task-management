@@ -35,6 +35,12 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getById(id));
     }
 
+    @PutMapping("/tasks/{taskId}")
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto request) {
+        TaskResponseDto taskResponseDto = taskService.updateTask(taskId, request);
+        return ResponseEntity.ok(taskResponseDto);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.delete(id);
@@ -56,7 +62,7 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(taskList);
     }
 
-    // mesela bu da
+
     @PatchMapping("tasks/{taskId}/status")
     public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatusRequest statusRequest) {
         TaskResponseDto taskResponse = taskService.updateTaskStatus(taskId, statusRequest);
