@@ -15,5 +15,13 @@ public class ErrorMessages {
     public static final String PROJECT_STATUS_CANNOT_BE_CANCELLED_OR_COMPLETED_ON_CREATE =
             "Project status cannot be 'Cancelled' or 'Completed' when creating a new project.";
 
+    // Business Rules
+    public static final String STATUS_ALREADY_COMPLETED = "Completed tasks cannot be modified";
+    public static final String STATUS_TRANSITION_INVALID = "Invalid status transition";
+    public static final String STATUS_REASON_REQUIRED = "A reason must be provided for Cancelled or Blocked status";
+    public static final String STATUS_SAME_AS_CURRENT = "The new status is the same as the current status";
+
+
+    private ErrorMessages() {}
 
 }
