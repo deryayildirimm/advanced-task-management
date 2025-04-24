@@ -8,6 +8,7 @@ public class ErrorMessages {
     public static final String PROJECT_NOT_FOUND = "Project not found.";
     public static final String TASK_NOT_FOUND = "Task not found.";
     public static final String TASK_ATTACHMENT_NOT_FOUND = "Task attachment not found.";
+    public static final String TASK_COMMENT_NOT_FOUND = "Task comment not found.";
     public static final String INVALID_REQUEST = "Invalid request.";
     public static final String USER_ALREADY_ASSIGNED = "User already assigned to this project.";
     public static final String USER_NOT_ASSIGNED = "User is not assigned to this project.";
