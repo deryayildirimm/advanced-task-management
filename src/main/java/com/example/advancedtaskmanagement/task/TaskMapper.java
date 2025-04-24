@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class TaskDtoConverter {
+public class TaskMapper {
 
     public TaskResponseDto toDto(Task task) {
         List<String> attachmentNames = task.getAttachments() != null
@@ -47,6 +47,6 @@ public class TaskDtoConverter {
         task.setDescription(dto.description());
         task.setAcceptanceCriteria(dto.acceptanceCriteria());
         task.setPriority(dto.priority());
-        // assignedUser ayrı handle ediliyor zaten
+
     }
 }

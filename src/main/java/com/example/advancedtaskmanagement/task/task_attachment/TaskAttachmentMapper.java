@@ -1,14 +1,19 @@
 package com.example.advancedtaskmanagement.task.task_attachment;
 
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface TaskAttachmentMapper {
+@Component
+public class TaskAttachmentMapper {
 
-    TaskAttachmentResponseDto toDto(TaskAttachment taskAttachment);
+    public TaskAttachmentResponseDto toDto(TaskAttachment taskAttachment) {
 
-    TaskAttachment toEntity(TaskAttachmentResponseDto taskAttachmentResponseDto);
+        return new TaskAttachmentResponseDto(
+                taskAttachment.getId(),
+                taskAttachment.getFilePath(),
+                taskAttachment.getFileName(),
+                taskAttachment.getUploadedAt()
+        );
 
-    TaskAttachmentRequestDto toTaskAttachmentRequestDto(TaskAttachmentResponseDto taskAttachment);
+    }
 
 }

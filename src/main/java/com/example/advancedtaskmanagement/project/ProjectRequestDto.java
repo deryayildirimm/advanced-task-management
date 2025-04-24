@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Date;
 
-
-
 public record ProjectRequestDto(
          @NotBlank(message = "Project title must not be blank")
          @Size(max = 100, message = "Project title must be at most 100 characters")

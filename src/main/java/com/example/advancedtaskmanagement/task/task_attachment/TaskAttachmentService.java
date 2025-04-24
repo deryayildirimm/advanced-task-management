@@ -21,15 +21,15 @@ import java.util.UUID;
 @Service
 public class TaskAttachmentService {
 
-    private final TaskAttachmentRepository repository;
+    private final TaskAttachmentRepository attachmentRepository;
     private final TaskService taskService;
     private final TaskAttachmentMapper taskAttachmentMapper;
 
 
-    public TaskAttachmentService(TaskAttachmentRepository repository,
+    public TaskAttachmentService(TaskAttachmentRepository attachmentRepository,
                                  TaskService taskService,
                                  TaskAttachmentMapper taskAttachmentMapper) {
-        this.repository = repository;
+        this.attachmentRepository = attachmentRepository;
         this.taskService = taskService;
         this.taskAttachmentMapper = taskAttachmentMapper;
     }
@@ -46,7 +46,7 @@ public class TaskAttachmentService {
                 Files.createDirectory(uploadDirPath);
             }
 
-            String uniqueFileName = UUID.randomUUID() + "_"+file.getOriginalFilename();
+            String uniqueFileName = UUID.randomUUID() + "_" +file.getOriginalFilename();
             Path filePath = uploadDirPath.resolve(uniqueFileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
@@ -57,14 +57,9 @@ public class TaskAttachmentService {
                     .uploadedAt(LocalDateTime.now())
                     .build();
 
-           TaskAttachment savedTaskAttachment = repository.save(taskAttachment);
+           TaskAttachment savedTaskAttachment = attachmentRepository.save(taskAttachment);
 
-            return new TaskAttachmentResponseDto(
-                    savedTaskAttachment.getId(),
-                    savedTaskAttachment.getFilePath(),
-                    savedTaskAttachment.getFileName(),
-                    savedTaskAttachment.getUploadedAt()
-            );
+            return taskAttachmentMapper.toDto(savedTaskAttachment);
         }catch(IOException e){
             throw new FileStorageException(ErrorMessages.FILE_UPLOAD_FAILED, e);
         }
@@ -72,13 +67,13 @@ public class TaskAttachmentService {
 
 
     protected TaskAttachment findTaskAttachmentById(Long id){
-        return repository.findById(id)
+        return attachmentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.TASK_ATTACHMENT_NOT_FOUND));
     }
 
 
     public List<TaskAttachmentResponseDto> getAttachmentsByTaskId(Long taskId) {
-        return repository.findByTaskId(taskId)
+        return attachmentRepository.findByTaskId(taskId)
                 .stream()
                 .map(taskAttachmentMapper::toDto)
                 .toList();
@@ -93,7 +88,7 @@ public class TaskAttachmentService {
             throw  new FileStorageException(ErrorMessages.FILE_DELETE_FAILED, ex);
         }
 
-        repository.delete(attachment);
+        attachmentRepository.delete(attachment);
     }
 
 }

@@ -17,7 +17,6 @@ import com.example.advancedtaskmanagement.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,21 +26,21 @@ public class ProjectService extends BaseService<Project> {
 
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
-    private final TaskMapper taskMapper;
+    private final TaskMapper taskDtoMapper;
     private final DepartmentService departmentService;
     private final ProjectUserAssignmentRepository projectUserAssignmentRepository;
     private final UserService userService;
 
     public ProjectService(ProjectRepository projectRepository,
                           ProjectMapper projectMapper,
-                          TaskMapper taskMapper,
+                          TaskMapper taskDtoMapper,
                           DepartmentService departmentService,
                           ProjectUserAssignmentRepository projectUserAssignmentRepository,
                           UserService userService) {
         super(projectRepository);
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
-        this.taskMapper = taskMapper;
+        this.taskDtoMapper = taskDtoMapper;
         this.departmentService = departmentService;
         this.projectUserAssignmentRepository = projectUserAssignmentRepository;
         this.userService = userService;
@@ -114,7 +113,7 @@ public class ProjectService extends BaseService<Project> {
         Project project = findById(projectId);
 
         return project.getTasks().stream()
-                .map(taskMapper::toTaskResponseDto)
+                .map(taskDtoMapper::toDto)
                 .collect(Collectors.toList());
     }
 

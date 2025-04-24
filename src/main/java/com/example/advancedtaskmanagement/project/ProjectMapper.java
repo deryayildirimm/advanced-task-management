@@ -1,29 +1,22 @@
 package com.example.advancedtaskmanagement.project;
 
-import com.example.advancedtaskmanagement.department.Department;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface ProjectMapper {
+@Component
+public class ProjectMapper {
 
-    @Mapping(source = "departmentId", target = "department", qualifiedByName = "mapDepartmentFromId")
-    Project toEntity(ProjectRequestDto dto);
+    public ProjectResponseDto toResponseDto(Project project) {
 
-    @Mapping(source = "department.name", target = "departmentName") // Entity -> DTO
-    @Mapping(source = "id", target = "id")
-    ProjectResponseDto toResponseDto(Project project);
+        return new ProjectResponseDto(
+                project.getId(),
+                project.getTitle(),
+                project.getDescription(),
+                project.getStartDate(),
+                project.getEndDate(),
+                project.getStatus(),
+                project.getDepartment() != null ? project.getDepartment().getName() : null
+        );
 
-
-    ProjectResponseDto projectToProjectResponseDTO(Project project);
-
-    // Bu metot manuel olarak bir servisten alınan Department'i bağlayacak şekilde tasarlanmıştır.
-    @Named("mapDepartmentFromId")
-    default Department mapDepartmentFromId(Long departmentId) {
-        if (departmentId == null) return null;
-        Department dept = new Department();
-        dept.setId(departmentId);
-        return dept;
     }
+
 }

@@ -10,7 +10,6 @@ import com.example.advancedtaskmanagement.exception.ResourceNotFoundException;
 import com.example.advancedtaskmanagement.project.Project;
 import com.example.advancedtaskmanagement.project.ProjectService;
 import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignmentRepository;
-import com.example.advancedtaskmanagement.task.task_attachment.TaskAttachment;
 import com.example.advancedtaskmanagement.task.task_progress.TaskProgressService;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserRepository;
@@ -29,7 +28,7 @@ public class TaskService extends BaseService<Task> {
     private final UserRepository userRepository;
     private final ProjectUserAssignmentRepository projectUserAssignmentRepository;
     private final ProjectService projectService;
-    private final TaskDtoConverter taskDtoConverter;
+    private final TaskMapper taskMapper;
 
 
     public TaskService(
@@ -37,20 +36,20 @@ public class TaskService extends BaseService<Task> {
             TaskProgressService taskProgressService,
             UserRepository userRepository,
             ProjectUserAssignmentRepository projectUserAssignmentRepository,
-            ProjectService projectService, TaskDtoConverter taskDtoConverter) {
+            ProjectService projectService, TaskMapper taskMapper) {
         super(taskRepository);
         this.taskRepository = taskRepository;
         this.taskProgressService = taskProgressService;
         this.userRepository = userRepository;
         this.projectUserAssignmentRepository = projectUserAssignmentRepository;
         this.projectService = projectService;
-        this.taskDtoConverter = taskDtoConverter;
+        this.taskMapper = taskMapper;
     }
 
 
     public TaskResponseDto getById(Long id) {
         Task task = findById(id);
-        return taskDtoConverter.toDto(task);
+        return taskMapper.toDto(task);
     }
 
     public TaskResponseDto createTask( Long projectId, TaskRequestDto dto) {
@@ -80,24 +79,24 @@ public class TaskService extends BaseService<Task> {
 
         taskProgressService.logProgress(task,task.getStatus(), Messages.TASK_CREATED);
 
-        return taskDtoConverter.toDto(savedTask);
+        return taskMapper.toDto(savedTask);
 
     }
 
     public List<TaskResponseDto> getAll() {
         return taskRepository.findByIsDeletedFalse().stream()
-                .map(taskDtoConverter::toDto)
+                .map(taskMapper::toDto)
                 .toList();
     }
 
     public List<TaskResponseDto> getByProjectId(Long projectId) {
         return taskRepository.findByProjectIdAndIsDeletedFalse(projectId)
-                .stream().map(taskDtoConverter::toDto).toList();
+                .stream().map(taskMapper::toDto).toList();
     }
 
     public List<TaskResponseDto> getByAssigneeId(Long assigneeId) {
         return taskRepository.findByAssignedUserIdAndIsDeletedFalse(assigneeId)
-                .stream().map(taskDtoConverter::toDto).toList();
+                .stream().map(taskMapper::toDto).toList();
     }
 
 
@@ -132,7 +131,7 @@ public class TaskService extends BaseService<Task> {
 
         taskProgressService.logProgress(task, request.status(), request.reason());
 
-        return taskDtoConverter.toDto(updatedTask);
+        return taskMapper.toDto(updatedTask);
     }
 
     public void delete(Long taskId) {
@@ -169,7 +168,7 @@ public class TaskService extends BaseService<Task> {
         // kaydet
         Task updatedTask = taskRepository.save(task);
         // dto dön
-        return taskDtoConverter.toDto(updatedTask);
+        return taskMapper.toDto(updatedTask);
     }
 
 

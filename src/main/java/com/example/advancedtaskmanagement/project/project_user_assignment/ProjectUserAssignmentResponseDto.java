@@ -5,8 +5,8 @@ import com.example.advancedtaskmanagement.user.Role;
 
 public record ProjectUserAssignmentResponseDto(
         Long id,
-        Long projectId,
-        Long userId,
+        String projectTitle,
+        String userName,
         Role role
 
 ) {

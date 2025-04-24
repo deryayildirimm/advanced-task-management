@@ -14,5 +14,5 @@ public interface TaskCommentRepository extends JpaRepository<TaskComment, Long> 
     Birden fazla sonuç döndüren sorgular için (findByTaskId(Long taskId)).
     Boş bir liste döndürmek mantıklıysa (Collections.emptyList()).
      */
-    Optional<TaskComment> findByTaskIdAndIsDeletedFalse(Long taskId);
+    Optional<TaskComment> findByTaskId(Long taskId);
 }

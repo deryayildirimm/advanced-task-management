@@ -13,8 +13,11 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class TaskComment extends BaseEntity {
+public class TaskComment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "task_id")
@@ -27,5 +30,6 @@ public class TaskComment extends BaseEntity {
     private String content;
 
     private LocalDateTime createdAt;
+
 
 }
