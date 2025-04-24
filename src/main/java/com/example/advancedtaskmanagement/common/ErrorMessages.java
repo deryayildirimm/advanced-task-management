@@ -17,6 +17,9 @@ public class ErrorMessages {
     public static final String PROJECT_STATUS_CANNOT_BE_CANCELLED_OR_COMPLETED_ON_CREATE =
             "Project status cannot be 'Cancelled' or 'Completed' when creating a new project.";
     public static final String USER_NOT_AUTHENTICATED = "User is not authenticated.";
+    public static final String DEPARTMENT_NAME_BLANK = "Department name cannot be blank.";
+    public static final String DEPARTMENT_NAME_SIZE = "Department name must be between 1 and 50 characters.";
+    public static final String DEPARTMENT_ALREADY_EXISTS = "Department already exists.";
 
     public static final String FILE_UPLOAD_FAILED = "File upload failed";
     public static final String FILE_DELETE_FAILED = "File deletion failed";
