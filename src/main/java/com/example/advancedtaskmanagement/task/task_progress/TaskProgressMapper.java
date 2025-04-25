@@ -1,10 +1,16 @@
 package com.example.advancedtaskmanagement.task.task_progress;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface TaskProgressMapper {
+@Component
+public class TaskProgressMapper {
 
-    TaskProgressResponseDto toResponseDto(TaskProgress taskProgress);
+    public TaskProgressResponseDto toDto(TaskProgress taskProgress) {
+        return new TaskProgressResponseDto(
+                taskProgress.getId(),
+                taskProgress.getStatus(),
+                taskProgress.getReason(),
+                taskProgress.getChangedAt()
+        );
+    }
 }

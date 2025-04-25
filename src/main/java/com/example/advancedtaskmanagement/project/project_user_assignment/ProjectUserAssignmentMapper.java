@@ -1,24 +1,18 @@
 package com.example.advancedtaskmanagement.project.project_user_assignment;
 
-import com.example.advancedtaskmanagement.project.Project;
-import com.example.advancedtaskmanagement.user.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+@Component
+public class ProjectUserAssignmentMapper {
 
-@Mapper(componentModel = "spring")
-public interface ProjectUserAssignmentMapper {
+    public ProjectUserAssignmentResponseDto toDto(ProjectUserAssignment projectUserAssignment) {
 
-    @Mapping(source = "project.id", target = "projectId")
-    @Mapping(source = "user.id", target = "userId")
-    ProjectUserAssignmentResponseDto toDto(ProjectUserAssignment assignment);
+        return new ProjectUserAssignmentResponseDto(
+                projectUserAssignment.getId(),
+                projectUserAssignment.getProject().getTitle(),
+                projectUserAssignment.getUser().getName(),
+                projectUserAssignment.getRole()
+        );
+    }
 
-
-    @Mapping(target = "project", source = "project")
-    @Mapping(target = "user", source = "user")
-    ProjectUserAssignment toEntity(ProjectUserAssignmentRequestDto dto, Project project, User user);
-
-    void updateAssignmentFromDto(ProjectUserAssignmentRequestDto dto, @MappingTarget ProjectUserAssignment assignment);
 }

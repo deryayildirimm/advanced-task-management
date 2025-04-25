@@ -1,22 +1,31 @@
 package com.example.advancedtaskmanagement.task.task_attachment;
 
-import com.example.advancedtaskmanagement.common.BaseEntity;
 import com.example.advancedtaskmanagement.task.Task;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class TaskAttachment extends BaseEntity {
+public class TaskAttachment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
+
+    private String filePath;
+    private String fileName;
+    private String fileType;
+    private LocalDateTime uploadedAt;
+
 
     @ManyToOne
     @JoinColumn(name = "task_id")
     private Task task;
 
-    private String filePath;
 
 }

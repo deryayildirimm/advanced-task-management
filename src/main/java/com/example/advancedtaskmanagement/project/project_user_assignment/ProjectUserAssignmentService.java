@@ -1,5 +1,7 @@
 package com.example.advancedtaskmanagement.project.project_user_assignment;
 
+import com.example.advancedtaskmanagement.common.ErrorMessages;
+import com.example.advancedtaskmanagement.exception.ResourceNotFoundException;
 import com.example.advancedtaskmanagement.project.Project;
 import com.example.advancedtaskmanagement.project.ProjectRepository;
 import com.example.advancedtaskmanagement.security.AuthService;
@@ -20,7 +22,11 @@ public class ProjectUserAssignmentService {
     private final UserRepository userRepository;
     private final AuthService authService;
 
-    public ProjectUserAssignmentService(ProjectUserAssignmentRepository assignmentRepository, ProjectUserAssignmentMapper mapper, ProjectRepository projectRepository, UserRepository userRepository, AuthService authService) {
+    public ProjectUserAssignmentService(ProjectUserAssignmentRepository assignmentRepository,
+                                        ProjectUserAssignmentMapper mapper,
+                                        ProjectRepository projectRepository,
+                                        UserRepository userRepository,
+                                        AuthService authService) {
         this.assignmentRepository = assignmentRepository;
         this.mapper = mapper;
         this.projectRepository = projectRepository;
@@ -56,10 +62,10 @@ public class ProjectUserAssignmentService {
     public ProjectUserAssignmentResponseDto assignUserToProject(ProjectUserAssignmentRequestDto request) {
 
         Project project = projectRepository.findById(request.projectId())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROJECT_NOT_FOUND));
 
         User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND));
 
 
         ProjectUserAssignment assignment = new ProjectUserAssignment();

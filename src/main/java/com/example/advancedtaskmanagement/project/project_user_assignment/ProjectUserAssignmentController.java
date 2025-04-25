@@ -1,5 +1,6 @@
 package com.example.advancedtaskmanagement.project.project_user_assignment;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class ProjectUserAssignmentController {
 
 
     @PostMapping
-    public ResponseEntity<ProjectUserAssignmentResponseDto> assignUserToProject(@RequestBody ProjectUserAssignmentRequestDto request) {
+    public ResponseEntity<ProjectUserAssignmentResponseDto> assignUserToProject(@RequestBody @Valid ProjectUserAssignmentRequestDto request) {
 
         return ResponseEntity.ok(assignmentService.assignUserToProject(request));
     }

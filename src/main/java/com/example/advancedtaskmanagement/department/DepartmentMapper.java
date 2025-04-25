@@ -1,14 +1,20 @@
 package com.example.advancedtaskmanagement.department;
 
-import org.mapstruct.Mapper;
+import com.example.advancedtaskmanagement.project.Project;
+import com.example.advancedtaskmanagement.user.User;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring")
-public interface DepartmentMapper {
+@Component
+public class DepartmentMapper {
 
+    public DepartmentResponseDto toDepartmentResponseDto(Department department) {
 
-    Department departmentRequestDTOToDepartment(DepartmentRequestDto departmentRequestDTO);
-
-    DepartmentResponseDto departmentToDepartmentResponseDTO(Department department);
-
+        return new DepartmentResponseDto(
+                department.getId(),
+                department.getName(),
+                department.getUserList().stream().map(User::getId).toList(),
+                department.getProjects().stream().map(Project::getId).toList()
+        );
+    }
 
 }

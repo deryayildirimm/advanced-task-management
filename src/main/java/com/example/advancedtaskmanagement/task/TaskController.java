@@ -1,6 +1,7 @@
 package com.example.advancedtaskmanagement.task;
 
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -20,7 +21,7 @@ public class TaskController {
     @PostMapping("projects/{projectId}/tasks")
     public ResponseEntity<TaskResponseDto> createTask(
             @PathVariable Long projectId,
-            @RequestBody TaskRequestDto request) {
+            @RequestBody @Valid TaskRequestDto request) {
         return ResponseEntity.ok(taskService.createTask(projectId,request));
     }
 
@@ -33,6 +34,12 @@ public class TaskController {
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(taskService.getById(id));
+    }
+
+    @PutMapping("/tasks/{taskId}")
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long taskId, @RequestBody TaskRequestDto request) {
+        TaskResponseDto taskResponseDto = taskService.updateTask(taskId, request);
+        return ResponseEntity.ok(taskResponseDto);
     }
 
     @DeleteMapping("/{id}")
@@ -56,8 +63,8 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK).body(taskList);
     }
 
-    // mesela bu da
-    @PatchMapping("tasks/{taskId}/status")
+
+    @PatchMapping("/{taskId}/status")
     public ResponseEntity<TaskResponseDto> changeTaskStatus(@PathVariable Long taskId, @RequestBody TaskStatusRequest statusRequest) {
         TaskResponseDto taskResponse = taskService.updateTaskStatus(taskId, statusRequest);
         return ResponseEntity.status(HttpStatus.OK).body(taskResponse);

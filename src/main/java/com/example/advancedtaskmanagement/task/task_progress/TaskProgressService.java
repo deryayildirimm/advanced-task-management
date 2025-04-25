@@ -6,30 +6,40 @@ import com.example.advancedtaskmanagement.task.TaskStatus;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class TaskProgressService {
 
-    private final TaskProgressRepository repository;
-    private final TaskProgressMapper mapper;
     private final TaskRepository taskRepository;
     private final TaskProgressRepository taskProgressRepository;
+    private final TaskProgressMapper taskProgressMapper;
 
     public TaskProgressService(
-            TaskProgressRepository repository,
-            TaskProgressMapper mapper, TaskRepository taskRepository, TaskProgressRepository taskProgressRepository) {
-        this.repository = repository;
-        this.mapper = mapper;
+            TaskRepository taskRepository,
+            TaskProgressRepository taskProgressRepository, TaskProgressMapper taskProgressMapper) {
         this.taskRepository = taskRepository;
+
         this.taskProgressRepository = taskProgressRepository;
+        this.taskProgressMapper = taskProgressMapper;
     }
 
 
     protected TaskProgress getTaskProgressById(Long id) {
         return taskProgressRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public void logProgress(Task task, TaskStatus status, String reason) {
+
+        TaskProgress taskProgress = TaskProgress.builder()
+                .task(task)
+                .status(status)
+                .reason(reason)
+                .changedAt(LocalDateTime.now())
+                .build();
+        taskProgressRepository.save(taskProgress);
     }
 
 
@@ -38,29 +48,17 @@ public class TaskProgressService {
 
         TaskProgress progress = TaskProgress.builder()
                 .task(task)
-                .changedAt(new Date())
+                .changedAt(LocalDateTime.now())
                 .reason(request.reason())
                 .build();
 
-        return mapper.toResponseDto(taskProgressRepository.save(progress));
+        return taskProgressMapper.toDto(taskProgressRepository.save(progress));
     }
 
     public List<TaskProgressResponseDto> getById(Long id) {
-        return repository.findByIdAndIsDeletedFalse(id).stream()
-                .map(mapper::toResponseDto)
+        return taskProgressRepository.findByIdAndIsDeletedFalse(id).stream()
+                .map(taskProgressMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    public TaskProgressResponseDto  addTaskProgress(Task task, TaskStatus status, String reason) {
-        TaskProgress taskProgress = new TaskProgress();
-        taskProgress.setTask(task);
-        taskProgress.setStatus(status);
-        taskProgress.setReason(reason);
-        taskProgress.setChangedAt(new Date());
-
-
-        taskProgress = repository.save(taskProgress);
-
-        return mapper.toResponseDto(taskProgress);
-    }
 }

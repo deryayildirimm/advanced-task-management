@@ -1,102 +1,86 @@
 package com.example.advancedtaskmanagement.task;
 
 
+import com.example.advancedtaskmanagement.common.BaseService;
 import com.example.advancedtaskmanagement.common.ErrorMessages;
+import com.example.advancedtaskmanagement.common.Messages;
+import com.example.advancedtaskmanagement.exception.BusinessException;
+import com.example.advancedtaskmanagement.exception.ExceptionHandler;
 import com.example.advancedtaskmanagement.exception.ResourceNotFoundException;
 import com.example.advancedtaskmanagement.project.Project;
-import com.example.advancedtaskmanagement.project.ProjectRepository;
+import com.example.advancedtaskmanagement.project.ProjectService;
 import com.example.advancedtaskmanagement.project.project_user_assignment.ProjectUserAssignmentRepository;
 import com.example.advancedtaskmanagement.task.task_progress.TaskProgressService;
 import com.example.advancedtaskmanagement.user.User;
 import com.example.advancedtaskmanagement.user.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Date;
+
 import java.util.List;
 
 
 @Service
-public class TaskService {
+public class TaskService extends BaseService<Task> {
 
     private final TaskRepository taskRepository;
     private final TaskProgressService taskProgressService;
-    private final TaskMapper taskMapper;
-    private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectUserAssignmentRepository projectUserAssignmentRepository;
-
+    private final ProjectService projectService;
+    private final TaskMapper taskMapper;
 
 
     public TaskService(
             TaskRepository taskRepository,
             TaskProgressService taskProgressService,
-            TaskMapper taskMapper,
-            ProjectRepository projectRepository,
             UserRepository userRepository,
-            ProjectUserAssignmentRepository projectUserAssignmentRepository
-    ) {
+            ProjectUserAssignmentRepository projectUserAssignmentRepository,
+            ProjectService projectService, TaskMapper taskMapper) {
+        super(taskRepository);
         this.taskRepository = taskRepository;
         this.taskProgressService = taskProgressService;
-        this.taskMapper = taskMapper;
-        this.projectRepository = projectRepository;
         this.userRepository = userRepository;
         this.projectUserAssignmentRepository = projectUserAssignmentRepository;
+        this.projectService = projectService;
+        this.taskMapper = taskMapper;
     }
 
-    /*  genel kullanılan metodlar */
-    protected Task getTaskById(Long id) {
-        return taskRepository.findByIdAndIsDeletedFalse(id).orElseThrow( () -> new ResourceNotFoundException(ErrorMessages.TASK_NOT_FOUND));
-    }
+
     public TaskResponseDto getById(Long id) {
-        Task task = getTaskById(id);
+        Task task = findById(id);
         return taskMapper.toDto(task);
     }
 
-    public Task generateTask(Project project , TaskRequestDto taskDto){
-
-        User newUser = userRepository.findById(taskDto.assignedUserId())
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND));
-
-        Task newTask = Task.builder()
-                .priority(taskDto.priority())
-                .description(taskDto.description())
-                .project(project)
-                .acceptanceCriteria(taskDto.acceptanceCriteria())
-                .status(taskDto.status())
-                .title(taskDto.title())
-                .assignedUser(newUser)
-                .build();
-
-        return taskRepository.save(newTask);
-    }
-
-
-    // burada güncellemeler olacak
-    /*
-    * bu taska atanan kullanıcı projede var mı ?  -> check projectuserassignee table
-    *
-     */
     public TaskResponseDto createTask( Long projectId, TaskRequestDto dto) {
 
-        Task task = taskMapper.toEntity(dto);
-
-        Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.PROJECT_NOT_FOUND));
-
-        User assignee = userRepository.findById(dto.assignedUserId())
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND));
-
-        task.setProject(project);
-        task.setAssignedUser(assignee);
-        task.setPriority(dto.priority());
-        task.setStatus(dto.status());
+        Project project = projectService.findById(projectId);
+        User user = userRepository.findById(dto.assignedUserId())
+                .orElseThrow( () -> new ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND));
 
 
-        return taskMapper.toDto(taskRepository.save(task));
+        boolean isAssigned = projectUserAssignmentRepository.findByProjectIdAndUserId(projectId, dto.assignedUserId())
+                .isPresent();
+        if(!isAssigned){
+            throw new ResourceNotFoundException(ErrorMessages.USER_NOT_ASSIGNED);
+        }
+
+        Task task = Task.builder()
+                .title(dto.title())
+                .description(dto.description())
+                .priority(dto.priority())
+                .acceptanceCriteria(dto.acceptanceCriteria())
+                .status(dto.status())
+                .assignedUser(user)
+                .project(project)
+                .build();
+
+      Task savedTask =   taskRepository.save(task);
+
+        taskProgressService.logProgress(task,task.getStatus(), Messages.TASK_CREATED);
+
+        return taskMapper.toDto(savedTask);
+
     }
 
     public List<TaskResponseDto> getAll() {
@@ -115,55 +99,78 @@ public class TaskService {
                 .stream().map(taskMapper::toDto).toList();
     }
 
-    // Task status güncelleme
+
     public TaskResponseDto updateTaskStatus(Long taskId, TaskStatusRequest request) {
-        Task task = getTaskById(taskId);
+        Task task = findById(taskId);
 
-        task.setStatus(request.status());
+        TaskStatus taskStatus = task.getStatus();
+        TaskStatus updatedTaskStatus = request.status();
 
-        if (task.getStatus() == TaskStatus.COMPLETED) {
-            throw new IllegalArgumentException("Completed tasks cannot be moved to any other state");
-        }
+        ExceptionHandler.throwIf(updatedTaskStatus == null || updatedTaskStatus.equals(taskStatus) ,
+                () -> new BusinessException(ErrorMessages.STATUS_SAME_AS_CURRENT));
 
-        if ((request.status() == TaskStatus.CANCELLED || request.status() == TaskStatus.BLOCKED) &&
-                (task.getStatus() != TaskStatus.IN_ANALYSIS && task.getStatus() != TaskStatus.IN_PROGRESS)) {
-            throw new IllegalArgumentException("Invalid transition to Cancelled or Blocked");
-        }
+        ExceptionHandler.throwIf(task.getStatus() == TaskStatus.COMPLETED ,
+                () -> new BusinessException(ErrorMessages.STATUS_ALREADY_COMPLETED));
 
-        if ((request.status() == TaskStatus.CANCELLED || request.status() == TaskStatus.BLOCKED) && (request.reason() == null || request.reason().isEmpty())) {
-            throw new IllegalArgumentException("Reason must be provided for Cancelled or Blocked status");
-        }
+        ExceptionHandler.throwIf(
+                (request.status() == TaskStatus.CANCELLED || request.status() == TaskStatus.BLOCKED) &&
+                        (task.getStatus() != TaskStatus.IN_ANALYSIS && task.getStatus() != TaskStatus.IN_PROGRESS),
+                () -> new BusinessException(ErrorMessages.STATUS_TRANSITION_INVALID)
+        );
+
+        ExceptionHandler.throwIf(
+                (request.status() == TaskStatus.CANCELLED || request.status() == TaskStatus.BLOCKED)
+                        && (request.reason() == null || request.reason().isEmpty()),
+                () -> new BusinessException(ErrorMessages.STATUS_REASON_REQUIRED)
+        );
+
 
         task.setStatus(request.status());
 
         Task updatedTask = taskRepository.save(task);
 
-        taskProgressService.addTaskProgress(task, request.status(), request.reason());
+        taskProgressService.logProgress(task, request.status(), request.reason());
 
-        return taskMapper.toTaskResponseDto(updatedTask);
+        return taskMapper.toDto(updatedTask);
     }
 
     public void delete(Long taskId) {
 
-        Task task = getTaskById(taskId);
-
-        task.setDeleted(true);
-        task.setDeletedAt(LocalDateTime.now());
-
-        Long userId = getCurrentUserId();
-
-        task.setDeletedBy(userId);
-
-        taskRepository.save(task);
+        softDelete(taskId);
     }
 
-    private Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User user) {
-            return user.getId();
+    public TaskResponseDto updateTask(Long taskId, TaskRequestDto request) {
+
+        Task task = findById(taskId);
+
+        //AssignedUser değişikliği var mı
+        Long incomingUserId = request.assignedUserId();
+        Long currentUserId = task.getAssignedUser() != null ? task.getAssignedUser().getId() : null;
+
+        if (incomingUserId != null && !incomingUserId.equals(currentUserId)) {
+            User newAssignedUser = userRepository.findById(incomingUserId)
+                    .orElseThrow(() -> new ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND));
+
+            boolean isAssigned = projectUserAssignmentRepository
+                    .findByProjectIdAndUserId(task.getProject().getId(), newAssignedUser.getId())
+                    .isPresent();
+
+            ExceptionHandler.throwIf(!isAssigned, () -> new BusinessException(ErrorMessages.USER_NOT_ASSIGNED));
+
+            task.setAssignedUser(newAssignedUser);
         }
-        throw new RuntimeException("User not authenticated");
+
+        //diğer alanları güncelle
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setAcceptanceCriteria(request.acceptanceCriteria());
+        task.setPriority(request.priority());
+        // kaydet
+        Task updatedTask = taskRepository.save(task);
+        // dto dön
+        return taskMapper.toDto(updatedTask);
     }
+
 
 
 }

@@ -6,7 +6,7 @@ import com.example.advancedtaskmanagement.task.Task;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -24,6 +24,6 @@ public class TaskProgress extends BaseEntity {
     private TaskStatus status;
 
     private String reason;
-    private Date changedAt;
+    private LocalDateTime changedAt;
 
 }

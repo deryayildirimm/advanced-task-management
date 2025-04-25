@@ -1,5 +1,6 @@
 package com.example.advancedtaskmanagement.task.task_comment;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +17,13 @@ public class TaskCommentController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskCommentResponseDto> addCommentToTask(@RequestBody TaskCommentRequestDto request) {
+    public ResponseEntity<TaskCommentResponseDto> addCommentToTask(@RequestBody @Valid TaskCommentRequestDto request) {
         return ResponseEntity.ok(taskCommentService.addComment(request));
     }
 
     @GetMapping("/task/{taskId}")
     public ResponseEntity<List<TaskCommentResponseDto>> getCommentsByTaskId(@PathVariable Long taskId) {
-        return ResponseEntity.ok(taskCommentService.getByTaskId(taskId));
+        return ResponseEntity.ok(taskCommentService.getCommentsByTaskId(taskId));
     }
 
     @DeleteMapping("/{commentId}")
@@ -34,7 +35,7 @@ public class TaskCommentController {
     @PutMapping("/{commentId}")
     public ResponseEntity<TaskCommentResponseDto> updateComment(
             @PathVariable Long commentId,
-            @RequestBody TaskCommentRequestDto request) {
+            @RequestBody @Valid TaskCommentRequestDto request) {
 
         return ResponseEntity.ok(taskCommentService.updateComment(commentId, request));
     }
