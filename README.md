@@ -31,7 +31,6 @@ Bu uygulama ile şu işlemler gerçekleştirilebilmektedir:
 - Swagger UI eklendi
 
 💡 Devam Edenler:
-- Bazı servis metotlarının geliştirilmesi
 - Unit test yazılması ve %80 kod kapsama hedefi
 
 ---
