@@ -41,26 +41,6 @@ Aşağıda bu uygulamanın veritabanı ilişkilerini gösteren ER diyagramı yer
 
 ![ER Diagramı](./Updated_ER_Diagram_With_Assignment.png)
 
----
-
-## 🌐 Swagger UI
-
-API dokümanları ve test endpointleri için Swagger arayüzü kullanılmaktadır.
-
-> 🔗 Swagger'a erişim: [https://advanced-task-management.onrender.com/swagger-ui/index.html](https://advanced-task-management.onrender.com/swagger-ui/index.html)
-
----
-
-## ✨ Canlı Ortam (Render.com)
-
-Backend uygulaması Docker image olarak build edilip Render.com'a otomatik olarak deploy edilmektedir.  Uygulamanın her zaman çalışır durumda olduğunu izlemek için UptimeRobot kullanılmıştır.  
-
-> 🔧 Yayındaki proje linki: [https://advanced-task-management.onrender.com/auth/welcome](https://advanced-task-management.onrender.com/auth/welcome)
-
-Uygulamanın frontend tarafı ileride geliştirilecektir. şu an için yalnızca backend endpointlerine ulaşılabilir.
-
----
-
 
 
 ## 🌐 Teknolojiler
